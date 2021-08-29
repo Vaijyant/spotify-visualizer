@@ -1,12 +1,8 @@
-import logo from './logo.svg';
-import './App.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import Login from './login'
 
 function App() {
-  return (
-   <div>
-      <a href="https://api.spotify.com"> Spotify </a>
-   </div>
-  );
+  return (<Login/>);
 }
 
 export default App;
