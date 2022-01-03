@@ -1,11 +1,13 @@
 import React from 'react'
 import { Container } from 'react-bootstrap'
+import * as Constants from './constants'
 
-const AUTH_URL = 'https://accounts.spotify.com/authorize?client_id=3161af22a7714180bef6dbfe9a6fec9f&response_type=code&redirect_uri=https://vaijyant.github.io/spotify-visualizer&scope=streaming%20user-read-email%20user-read-private%20user-read-email%20user-library-read%20user-library-modify%20user-read-playback-state%20user-modify-playback-state%20user-read-currently-playing'
 export default function Login() {
+    let authUrl = Constants.AUTH_URL + '?client_id=' +   Constants.CLIENT_ID + '&response_type=code&redirect_uri=' + Constants.REDIRECT_URI + '&scope=' + encodeURIComponent(Constants.SCOPE)
     return (
-       <Container>
-           <a className="btn btn-success btn-lg" href={AUTH_URL}>Login with Spotify</a>
+       <Container className="d-flex justify-content-center align-items-center"
+       style={{ minHeight: "100vh"}}>
+           <a className="btn btn-success btn-lg" href={authUrl}>Login with Spotify</a>
        </Container>
     )
 }
