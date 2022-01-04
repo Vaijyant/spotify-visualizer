@@ -28,7 +28,6 @@ export default function Dashboard({ code }) {
     useEffect(() => {
         if (!playingTrack) return
         spotifyApi.getAudioAnalysisForTrack(playingTrack.id).then(res => {
-            console.log(res)
             setAudioAnalysis(res);
         });
     }, [playingTrack]);
