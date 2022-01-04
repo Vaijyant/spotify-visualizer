@@ -1,4 +1,4 @@
 export default function Visualizer({ audioAnalysis }) {
-    console.audioAnalysis(audioAnalysis);
+    console.log(audioAnalysis);
     return <div/>
 }
