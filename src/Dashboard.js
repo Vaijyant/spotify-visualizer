@@ -4,6 +4,7 @@ import { Container, Form } from 'react-bootstrap'
 import SpotifyWebApi from 'spotify-web-api-node'
 import TrackSearchResult from './TrackSearchResult'
 import Player from './Player'
+import Visualizer from './Visualizer'
 import axios from 'axios'
 import { BFF_URI } from './constants'
 
@@ -16,25 +17,21 @@ export default function Dashboard({ code }) {
     const [search, setSearch] = useState("")
     const [serachResults, setSearchResults] = useState([])
     const [playingTrack, setPlayingTrack] = useState()
-    const [lyrics, setLyrics] = useState("")
+    const [audioAnalysis, setAudioAnalysis] = useState({})
 
     function chooseTrack(track) {
         setPlayingTrack(track)
         setSearch("")
-        setLyrics("")
+        setAudioAnalysis({})
     }
 
     useEffect(() => {
         if (!playingTrack) return
-        axios.get(BFF_URI + "/lyrics", {
-            params: {
-                track: playingTrack.title,
-                artist: playingTrack.artist
-            }
-        }).then(res => {
-            setLyrics(res.data.lyrics)
-        })
-    }, [playingTrack])
+        spotifyApi.getAudioAnalysisForTrack(playingTrack.id).then(res => {
+            console.log(res)
+            setAudioAnalysis(res);
+        });
+    }, [playingTrack]);
 
     useEffect(() => {
         if (!accessToken) return
@@ -61,6 +58,7 @@ export default function Dashboard({ code }) {
                         artist: track.artists[0].name,
                         title: track.name,
                         uri: track.uri,
+                        id: track.id,
                         albumUrl: smalestAlbumImage.url
                     }
                 }))
@@ -81,11 +79,7 @@ export default function Dashboard({ code }) {
                 {serachResults.map(track => (
                     <TrackSearchResult track={track} key={track.uri} chooseTrack={chooseTrack} />
                 ))}
-                {serachResults.length === 0 && (
-                    <div className="text-center" style={{ whiteSpace: "pre" }}>
-                        {lyrics}
-                    </div>
-                )}
+                {serachResults.length === 0 && (<Visualizer audioAnalysis={audioAnalysis}/>)}
             </div>
             <div><Player accessToken={accessToken} trackUri={playingTrack?.uri} /></div>
         </Container>
