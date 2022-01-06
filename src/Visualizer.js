@@ -1,76 +1,81 @@
-import React, { useRef, useEffect,useState } from 'react'
+import React, { useRef, useEffect, useState } from 'react'
 import opening from './opening.wav'
 
 export default function Visualizer({ audioAnalysis }) {
 
+    const [audioData, setAudioData] = useState();
+    const [visualizer, setVisualizer] = useState();
 
     console.log(audioAnalysis);
 
-    
-   
-
 
     let animator = (analyser, canvas, ctx) => {
-    
-        
-        console.log(canvas.width);
-        console.log(canvas.height);
-        
-        
+
         function animate() {
             const bufferLength = analyser.frequencyBinCount;
+            console.log("Buffer: " + bufferLength);
             const dataArray = new Uint8Array(bufferLength);
-    
-    
-            const barWidth = canvas.width/bufferLength;
+
+
+            const barWidth = canvas.width / bufferLength;
             let barHeight;
-           
+
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             analyser.getByteFrequencyData(dataArray);
-            console.log(dataArray);
-            
-            for(let i=0; i<bufferLength; i++) {
-                let  x = 0;
-                barHeight = dataArray[i];
-                ctx.fillStyle = 'white';
-                ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
-                x += barWidth;
-    
-            }
-            requestAnimationFrame(animate);
+         
+            let x = 0;
+            visualize(canvas, ctx, x, bufferLength, barHeight, barWidth,dataArray)
+            requestAnimationFrame(animate);    
         }
+
         animate();
+        
+        
     }
-   
+
+    function visualize(canvas, ctx, x, bufferLength, barHeight, barWidth,dataArray) {
+        for (let i = 0; i < bufferLength; i++) {
+            barHeight = dataArray[i] * 0.5;
+            ctx.fillStyle = 'white';
+            ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
+            x += barWidth;
+
+        }
+    }
+
 
     const canvasRef = useRef(null)
     useEffect(() => {
-
-        let audio1 = new Audio();
-        audio1.src = opening;
-        audio1.play();
-    
-        const audioCtx = new AudioContext();
-        let audioSource = audioCtx.createMediaElementSource(audio1);
-        let audioAnalyser = audioCtx.createAnalyser();
-        audioSource.connect(audioAnalyser);
-        audioAnalyser.connect(audioCtx.destination);
-        audioAnalyser.fftSize = 128;
+        if (!audioData || !visualizer) return;
 
         let canvas = canvasRef.current;
-        let ctx = canvas.getContext('2d');
+        let canvasContext = canvas.getContext('2d');
 
-        animator(audioAnalyser, canvas, ctx)
-        
-      }, [])
-  
+        let audio = new Audio();
+        audio.src = audioData;
+        audio.play();
+
+
+        let audioContext = new AudioContext();
+        let audioSource = audioContext.createMediaElementSource(audio);
+
+        let audioAnalyser = audioContext.createAnalyser();
+        audioSource.connect(audioAnalyser);
+        audioAnalyser.connect(audioContext.destination);
+        audioAnalyser.fftSize = 1024;
+
+        visualizer(audioAnalyser, canvas, canvasContext)
+
+    }, [audioData, visualizer])
+
 
     function playSound() {
-       
+        setAudioData(opening)
+        setVisualizer(() => animator)
     }
 
-   
-    return <div style={{ height: "100%"  }} onClick={playSound}>
+
+    return <div style={{ height: "100%" }} onClick={playSound}>
         <canvas ref={canvasRef} style={{ backgroundColor: "black", height: "100%", width: "100%" }}></canvas>
     </div>
 }
