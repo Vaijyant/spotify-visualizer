@@ -78,7 +78,7 @@ export default function Dashboard({ code }) {
                 {serachResults.map(track => (
                     <TrackSearchResult track={track} key={track.uri} chooseTrack={chooseTrack} />
                 ))}
-                {serachResults.length === 0 && (<Visualizer audioAnalysis={audioAnalysis}/>)}
+                {serachResults.length === 0 && (<div  style={{ height: "100%"  }}><Visualizer audioAnalysis={audioAnalysis}/></div>)}
             </div>
             <div><Player accessToken={accessToken} trackUri={playingTrack?.uri} /></div>
         </Container>
