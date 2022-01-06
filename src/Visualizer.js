@@ -22,21 +22,24 @@ export default function Visualizer({ audioAnalysis }) {
 
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             analyser.getByteFrequencyData(dataArray);
-         
+
             let x = 0;
-            visualize(canvas, ctx, x, bufferLength, barHeight, barWidth,dataArray)
-            requestAnimationFrame(animate);    
+            visualize(canvas, ctx, x, bufferLength, barHeight, barWidth, dataArray)
+            requestAnimationFrame(animate);
         }
 
         animate();
-        
-        
+
+
     }
 
-    function visualize(canvas, ctx, x, bufferLength, barHeight, barWidth,dataArray) {
+    function visualize(canvas, ctx, x, bufferLength, barHeight, barWidth, dataArray) {
         for (let i = 0; i < bufferLength; i++) {
-            barHeight = dataArray[i] * 0.5;
-            ctx.fillStyle = 'white';
+            barHeight = dataArray[i] * 3;
+            const red = i  * barHeight / 20;
+            const green = i * 4;
+            const blue = barHeight /2 ;
+            ctx.fillStyle = 'rgb(' + red + ', ' + green + ', ' + blue + ')';
             ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
             x += barWidth;
 
@@ -75,7 +78,7 @@ export default function Visualizer({ audioAnalysis }) {
     }
 
 
-    return <div style={{ height: "100%" }} onClick={playSound}>
-        <canvas ref={canvasRef} style={{ backgroundColor: "black", height: "100%", width: "100%" }}></canvas>
+    return <div style={{ backgroundColor: "black", height: "100%" }} onClick={playSound}>
+        <canvas ref={canvasRef} style={{ backgroundColor: "black" }} width="800px" height="820px"></canvas>
     </div>
 }
