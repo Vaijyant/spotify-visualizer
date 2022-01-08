@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react'
-import opening from './paradise.mp3'
+import opening from './never.mp3'
 
 export default function Visualizer({ audioAnalysis }) {
 
@@ -17,7 +17,7 @@ export default function Visualizer({ audioAnalysis }) {
             const dataArray = new Uint8Array(bufferLength);
 
 
-            const barWidth = (canvas.width / 2 ) / bufferLength;
+            const barWidth = canvas.width / (bufferLength);
             let barHeight;
 
             ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -35,34 +35,38 @@ export default function Visualizer({ audioAnalysis }) {
 
     let visualizeBars = (canvas, ctx, x, bufferLength, barHeight, barWidth, dataArray) => {
         for (let i = 0; i < bufferLength; i++) {
-            barHeight = dataArray[i] * 3;
-            const red = i  * barHeight / 20;
+            barHeight = dataArray[i] * 2;
+            const red = i * barHeight / 20;
             const green = i * 4;
-            const blue = barHeight /2 ;
+            const blue = barHeight / 2;
             ctx.fillStyle = 'rgb(' + red + ', ' + green + ', ' + blue + ')';
             ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
             x += barWidth;
         }
     }
 
+
     let visualizeSymBars = (canvas, ctx, x, bufferLength, barHeight, barWidth, dataArray) => {
-        for (let i = 0; i < bufferLength; i++) {
-            barHeight = dataArray[i] * 3;
-            const red = i  * barHeight / 20;
-            const green = i ** 2
-            const blue = barHeight /2 ;
-            ctx.fillStyle = 'rgb(' + red + ', ' + blue  + ', ' + green + ')';
-            ctx.fillRect(canvas.width/2 - x, canvas.height - barHeight, barWidth, barHeight);
+
+        for (let i = 0; i < bufferLength / 2; i++) {
+            barHeight = dataArray[i] * 2.5;
+            let gradient = ctx.createLinearGradient(0, canvas.height - barHeight, 0, canvas.height);
+            gradient.addColorStop(0, 'red');
+            gradient.addColorStop(1 / 2, 'orange');
+            gradient.addColorStop(1, 'yellow');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(canvas.width / 2 - x, canvas.height - barHeight, barWidth, barHeight);
             x += barWidth;
 
         }
-        for (let i = 0; i < bufferLength; i++) {
-            barHeight = dataArray[i] * 3;
-            const red = i  * barHeight / 20;
-            const green = i;
-            const blue = barHeight /2 ;
-            ctx.fillStyle = 'rgb(' + green + ', ' + red + ', ' + blue + ')';
-            ctx.fillRect(x+100, canvas.height - barHeight, barWidth, barHeight);
+        for (let i = 0; i < bufferLength / 2; i++) {
+            barHeight = dataArray[i] * 2.5;
+            let gradient = ctx.createLinearGradient(0, canvas.height - barHeight, 0, canvas.height);
+            gradient.addColorStop(0, 'red');
+            gradient.addColorStop(1 / 2, 'orange');
+            gradient.addColorStop(1, 'yellow');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
             x += barWidth;
 
         }
@@ -74,8 +78,9 @@ export default function Visualizer({ audioAnalysis }) {
         if (!audioData || !visualizer || !visualizerType) return;
 
         let canvas = canvasRef.current;
+        canvas.filter = 'blur(100px) contrast(10)';
         let canvasContext = canvas.getContext('2d');
-        
+
 
         let audio = new Audio();
         audio.src = audioData;
@@ -88,7 +93,7 @@ export default function Visualizer({ audioAnalysis }) {
         let audioAnalyser = audioContext.createAnalyser();
         audioSource.connect(audioAnalyser);
         audioAnalyser.connect(audioContext.destination);
-        audioAnalyser.fftSize = 1024;
+        audioAnalyser.fftSize = 2048;
 
         visualizer(audioAnalyser, canvas, canvasContext, visualizerType)
 
@@ -103,6 +108,6 @@ export default function Visualizer({ audioAnalysis }) {
 
 
     return <div style={{ backgroundColor: "black", height: "100%" }} onClick={playSound}>
-        <canvas ref={canvasRef} style={{ backgroundColor: "black" }} width="800px" height="820px"></canvas>
+        <canvas ref={canvasRef} style={{ backgroundColor: "black" }} width="1920px" height="889px"></canvas>
     </div>
 }
