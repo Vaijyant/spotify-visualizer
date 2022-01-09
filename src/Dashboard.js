@@ -4,12 +4,12 @@ import { Form } from 'react-bootstrap'
 import SpotifyWebApi from 'spotify-web-api-node'
 import TrackSearchResult from './TrackSearchResult'
 import Player from './Player'
+import Visualizer2 from './Visualizer2'
 import Visualizer from './Visualizer'
-import axios from 'axios'
-import { BFF_URI } from './constants'
+import { CLIENT_ID } from './constants'
 
 const spotifyApi = new SpotifyWebApi({
-    clientId: "3161af22a7714180bef6dbfe9a6fec9f"
+    clientId: CLIENT_ID
 })
 
 export default function Dashboard({ code }) {

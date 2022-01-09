@@ -9,7 +9,7 @@ export default function useAuth(code) {
 
     useEffect(() => {
         axios
-            .post(Constants.BFF_URI + '/login', {
+            .post(Constants.BFF_URI + '/auth-token', {
                 code
             })
             .then(res => {
@@ -27,7 +27,7 @@ export default function useAuth(code) {
         if (!refreshToken || !expiresIn) return
         const interval = setInterval(() => {
             axios
-                .post(Constants.BFF_URI + '/refresh', {
+                .post(Constants.BFF_URI + '/refresh-authtoken', {
                     refreshToken
                 })
                 .then(res => {
